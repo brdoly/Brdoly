@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoidShell - Key System</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 20px; min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://i.pinimg.com/originals/8a/8d/30/8a8d30e4c62b9044f507b5a839f8f2b1.gif') no-repeat center center fixed;
+    background-size: cover; color: #ffffff; position: relative;
+  }
+  body::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(12, 10, 26, 0.75); backdrop-filter: blur(10px); z-index: 1;
+  }
+  .container {
+    position: relative; z-index: 2;
+    background: rgba(22, 19, 38, 0.85);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 30px 20px; border-radius: 24px;
+    width: 100%; max-width: 420px; text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 158, 11, 0.2);
+  }
+  .title {
+    font-size: 20px; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { font-size: 11px; color: #9ca3af; margin-bottom: 22px; line-height: 1.4; }
+  .box-card {
+    background: rgba(30, 27, 51, 0.7); border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px; padding: 14px; margin-bottom: 15px; text-align: left;
+  }
+  .box-label { font-size: 10px; font-weight: bold; color: #f59e0b; margin-bottom: 6px; }
+  .key-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(13, 11, 24, 0.9); padding: 10px 14px; border-radius: 10px;
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+  }
+  .key-text { font-family: monospace; font-size: 13px; font-weight: bold; color: #34d399; word-break: break-all; }
+  .copy-icon { background: none; border: none; cursor: pointer; color: #9ca3af; font-size: 16px; }
+  .btn-main {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 13px; margin-top: 10px; border: none; border-radius: 12px;
+    font-weight: bold; cursor: pointer; font-size: 13px; color: white;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4); transition: 0.3s;
+  }
+  .btn-main:hover { transform: translateY(-2px); filter: brightness(1.15); }
+  .btn-main:disabled { opacity: .5; cursor: not-allowed; }
+  .countdown { font-size: 11px; color: #38bdf8; margin-top: 12px; font-weight: 600; }
+  .footer-info { margin-top: 20px; font-size: 9px; color: #6b7280; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
+  .warn { color: #f85149; font-size: 12px; margin-top: 12px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">VOIDSHELL KEY SYSTEM</div>
+  <div class="subtitle" id="subtitle">Your 12-hour Key has been generated successfully!<br>Paste the Key into the in-game menu.</div>
+  <div class="box-card">
+    <div class="box-label">🔑 YOUR KEY</div>
+    <div class="key-row">
+      <span class="key-text" id="keyDisplay">Đang kiểm tra...</span>
+      <button class="copy-icon" onclick="copyKey()">📋</button>
+    </div>
+  </div>
+  <button class="btn-main" id="btnMain" onclick="mainAction()">Đang tải...</button>
+  <div class="countdown" id="countdown"></div>
+  <div class="warn" id="warn"></div>
+  <div class="footer-info">VOIDSHELL HUB • SECURE ANTI-BYPASS SYSTEM</div>
+</div>
+
+<script>
+/* ===== SỬA 3 DÒNG NÀY ===== */
+const SECRET = 'void_shell_2026_bimat_xyz_9a8b7c6d5e4f';
+const TOKEN  = 'VOID_T0KEN_9f3a2b';
+const LINK4M = 'https://link4m.co/xxxxx1';
+
+/* ===== KHÔNG SỬA BÊN DƯỚI ===== */
+const PREFIX   = 'VOID';
+const LS_TIME  = 'void_expire_time';
+const LS_PASS  = 'void_passed';
+const LS_KEY   = 'void_my_key';
+const DURATION = 12 * 60 * 60 * 1000;
+
+async function getFingerprint(){
+  const raw = [
+    navigator.userAgent, navigator.language,
+    screen.width + 'x' + screen.height, screen.colorDepth,
+    new Date().getTimezoneOffset(),
+    navigator.hardwareConcurrency || 0,
+    navigator.platform, navigator.deviceMemory || 0,
+    navigator.maxTouchPoints || 0
+  ].join('|');
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  ctx.textBaseline = 'top'; ctx.font = '14px Arial';
+  ctx.fillStyle = '#f60'; ctx.fillRect(0, 0, 100, 20);
+  ctx.fillStyle = '#069'; ctx.fillText('VoidShell-FP', 2, 2);
+  ctx.strokeStyle = 'rgba(102,204,0,0.7)';
+  ctx.arc(50, 50, 30, 0, Math.PI * 2); ctx.stroke();
+  const cvs = c.toDataURL();
+  let webgl = '';
+  try {
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) webgl = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) + '|' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+    }
+  } catch(e){}
+  const buf = new TextEncoder().encode(raw + '|' + cvs + '|' + webgl);
+  const h = await crypto.subtle.digest('SHA-256', buf);
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function buildKey(){
+  const fp = await getFingerprint();
+  const n = new Date();
+  const dayStr = `${n.getFullYear()}-${n.getMonth()+1}-${n.getDate()}`;
+  const buf = new TextEncoder().encode(SECRET + '|' + fp + '|' + dayStr);
+  const h = await crypto.subtle.digest('SHA-256', buf);
+  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
+  const short = hex.slice(0, 16).toUpperCase();
+  return `${PREFIX}-${short.match(/.{1,4}/g).join('-')}`;
+}
+
+function currentExpire(){
+  const n = new Date();
+  const exp = new Date(n);
+  if (n.getHours() < 12){ exp.setHours(12, 0, 0, 0); }
+  else { exp.setDate(exp.getDate() + 1); exp.setHours(0, 0, 0, 0); }
+  return exp.getTime();
+}
+
+function checkPassed(){
+  const params = new URLSearchParams(location.search);
+  if (params.get('passed') === '1' && params.get('t') === TOKEN){
+    localStorage.setItem(LS_PASS, Date.now().toString());
+    history.replaceState({}, '', location.pathname);
+    return true;
+  }
+  const passedAt = parseInt(localStorage.getItem(LS_PASS) || '0', 10);
+  const exp = currentExpire();
+  if (passedAt > 0 && passedAt < exp && Date.now() - passedAt < DURATION){
+    return true;
+  }
+  return false;
+}
+
+(async () => {
+  if (!checkPassed()){
+    document.getElementById('keyDisplay').innerText = '********-****-****-****';
+    document.getElementById('subtitle').innerHTML = 'Bạn chưa vượt link để lấy key.<br>Nhấn nút bên dưới để vượt link4m.';
+    document.getElementById('btnMain').innerText = '🔗 VƯỢT LINK4M ĐỂ LẤY KEY';
+    document.getElementById('btnMain').dataset.act = 'pass';
+    return;
+  }
+  await showKey();
+})();
+
+async function showKey(){
+  const key = await buildKey();
+  document.getElementById('keyDisplay').innerText = key;
+  localStorage.setItem(LS_KEY, key);
+  localStorage.setItem(LS_TIME, currentExpire().toString());
+  document.getElementById('subtitle').innerHTML = 'Your 12-hour Key has been generated successfully!<br>Paste the Key into the in-game menu.';
+  document.getElementById('btnMain').innerText = '📋 COPY KEY NGAY';
+  document.getElementById('btnMain').dataset.act = 'copy';
+  updateTimer();
+  setInterval(updateTimer, 1000);
+}
+
+function updateTimer(){
+  const exp = parseInt(localStorage.getItem(LS_TIME) || '0', 10);
+  const diff = Math.floor((exp - Date.now()) / 1000);
+  const el = document.getElementById('countdown');
+  if (diff <= 0){
+    el.innerText = "⏳ Key đã hết hạn! Đang làm mới...";
+    localStorage.removeItem(LS_PASS);
+    setTimeout(() => location.href = location.pathname, 1500);
+    return;
+  }
+  const remH = Math.floor(diff / 3600);
+  const remM = Math.floor((diff % 3600) / 60);
+  const remS = diff % 60;
+  el.innerText = `⏳ Thời hạn Key còn lại: ${remH}h ${remM}m ${remS}s`;
+}
+
+function mainAction(){
+  const act = document.getElementById('btnMain').dataset.act;
+  if (act === 'pass'){
+    window.open(LINK4M, '_blank');
+    document.getElementById('warn').innerText = 'Sau khi vượt link4m xong, quay lại tab này và bấm F5 để nhận key.';
+  } else if (act === 'copy'){
+    copyKey();
+  }
+}
+
+function copyKey(){
+  const k = document.getElementById('keyDisplay').innerText;
+  if (k.includes('*')){
+    document.getElementById('warn').innerText = 'Chưa có key. Vượt link trước.';
+    return;
+  }
+  navigator.clipboard.writeText(k);
+  alert('Đã copy Key VoidShell thành công!');
+}
+
+window.addEventListener('focus', async () => {
+  if (checkPassed() && document.getElementById('keyDisplay').innerText.includes('*')){
+    await showKey();
+  }
+});
+</script>
+</body>
+</html>
