@@ -152,7 +152,7 @@
 
 <script>
 /* ============================================================
-   CẤU HÌNH — 4 HUB (link4m đã điền sẵn)
+   CẤU HÌNH — 4 HUB
    ============================================================ */
 const HUBS = {
   1: {
@@ -221,24 +221,15 @@ async function getFingerprint(){
 }
 
 /* ============================================================
-   HASH — modulo 2147483647, PHẢI GIỐNG LUA
+   KEY = AURA-KEY-{timestamp_base36}-{secret_slice_8}
+   secret_slice = 8 ký tự đầu của secret, uppercase
+   KHÔNG dùng hash — so sánh chuỗi trực tiếp với script
    ============================================================ */
-function hash8(str){
-  let h1 = 0, h2 = 0;
-  for (let i = 0; i < str.length; i++){
-    const c = str.charCodeAt(i);
-    h1 = (h1 * 31 + c) % 2147483647;
-    h2 = (h2 * 37 + c) % 2147483647;
-  }
-  const hex = (h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0'));
-  return hex.slice(0, 8).toUpperCase();
-}
-
 async function buildKey(hubId, fp, issuedAt){
   const hub = HUBS[hubId];
   const ts36 = Math.floor(issuedAt / 1000).toString(36).toUpperCase();
-  const hash = hash8(hub.secret + '|' + ts36);
-  return `AURA-KEY-${ts36}-${hash}`;
+  const secretSlice = hub.secret.slice(0, 8).toUpperCase();
+  return `AURA-KEY-${ts36}-${secretSlice}`;
 }
 
 /* ============================================================
