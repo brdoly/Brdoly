@@ -1,11 +1,7 @@
 -- language: Lua, file: AuraKeyUI.lua
 -- Executor: Delta / Fluxus / Codex / Arceus X / Solara / Wave
--- All-in-one: Get Key from web + Check Key (offline timestamp) + Load Script
 
---[[ ============================================================
-     CẤU HÌNH — 4 HUB
-     ============================================================ ]]
-local WEB_URL = "https://brdoly.github.io/Brdoly/AURA_KEY.html"   -- <-- ĐỔI LINK WEB CỦA MÀY
+local WEB_URL = "https://brdoly.github.io/Brdoly/AURA_KEY.html"
 
 local HUBS = {
     [1] = {
@@ -21,7 +17,7 @@ local HUBS = {
     [3] = {
         name    = "VZSTUDIO",
         secret  = "9e5c2a7f4b1d8e6c3a0f9b5d2e7c4a1f8b6d3e9c5a2f7b4d1e8c6a3f9b5d2e7c",
-        loadstring_url = "http://vxezestudio.online/api/scripts/script_G5CGjqj2X3rOS/strem/init"
+        loadstring_url = "https://vxezestudio.online/api/scripts/script_G5CGjqj2X3rOS/strem/init"
     },
     [4] = {
         name    = "JUALNASI",
@@ -30,9 +26,6 @@ local HUBS = {
     }
 }
 
---[[ ============================================================
-     LOAD RAYFIELD
-     ============================================================ ]]
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
@@ -47,67 +40,61 @@ local Window = Rayfield:CreateWindow({
 local MainTab   = Window:CreateTab("🔑 Get Key", 4483362458)
 local ScriptTab = Window:CreateTab("📜 Scripts", 4483362458)
 
---[[ ============================================================
-     STATE
-     ============================================================ ]]
 local selectedHub    = 1
 local unlockedHubs   = {}
 local createdButtons = {}
 
---[[ ============================================================
-     HASH DJB2 — PHẢI GIỐNG HÀM TRONG WEB
-     ============================================================ ]]
-local function djb2(s, seed)
-    local h = seed
-    for i = 1, #s do
-        h = (h * 33 + string.byte(s, i)) % 4294967296
-    end
-    return h
-end
-
+-- hash — PHẢI GIỐNG HÀM TRONG WEB
 local function hash8(str)
-    local a = djb2(str .. "|a", 5381)
-    local b = djb2(str .. "|b", 5381)
-    local hex = string.format("%08x%08x", a, b)
-    return hex:sub(1, 8):upper()
+    local h1, h2 = 0, 0
+    for i = 1, #str do
+        local c = string.byte(str, i)
+        h1 = (h1 * 31 + c) % 2147483647
+        h2 = (h2 * 37 + c) % 2147483647
+    end
+    return string.format("%08x%08x", h1, h2):sub(1, 8):upper()
 end
 
---[[ ============================================================
-     CHECK KEY
-     Format: AURA-KEY-{timestamp_base36}-{hash8}
-     ============================================================ ]]
+local function cleanKey(str)
+    if type(str) ~= "string" then return "" end
+    return str:gsub("%s+", ""):gsub("[^A-Za-z0-9%-]", ""):upper()
+end
+
 local function isValidKey(key, hubSecret)
     if type(key) ~= "string" then return false, "Key rỗng" end
-    key = key:gsub("%s+", ""):upper()
+    key = cleanKey(key)
 
     local parts = {}
     for p in key:gmatch("[^%-]+") do table.insert(parts, p) end
 
-    if #parts ~= 4 then return false, "Key sai định dạng" end
-    if parts[1] ~= "AURA" or parts[2] ~= "KEY" then return false, "Prefix sai" end
+    if #parts ~= 4 then
+        return false, "Key sai định dạng (" .. #parts .. " phần)\nKey: " .. key
+    end
+    if parts[1] ~= "AURA" or parts[2] ~= "KEY" then
+        return false, "Prefix sai\nKey: " .. key
+    end
 
-    local ts36  = parts[3]
+    local ts36     = parts[3]
     local hash8Str = parts[4]
 
     local ts = tonumber(ts36, 36)
-    if not ts then return false, "Timestamp sai" end
+    if not ts then return false, "Timestamp sai: " .. ts36 end
 
     local nowSec = os.time()
     local age = nowSec - ts
-    if age < 0 then return false, "Key không hợp lệ" end
-    if age > 12 * 60 * 60 then return false, "Key đã hết hạn 12h" end
+    if age < 0 then return false, "Key không hợp lệ (tương lai)" end
+    if age > 12 * 60 * 60 then
+        return false, "Key đã hết hạn 12h\nTuổi: " .. math.floor(age/60) .. " phút"
+    end
 
     local expected = hash8(hubSecret .. "|" .. ts36)
     if hash8Str ~= expected then
-        return false, "Key không hợp lệ (hash sai)"
+        return false, "Hash sai\nBạn: " .. hash8Str .. "\nCần: " .. expected
     end
 
     return true, "OK"
 end
 
---[[ ============================================================
-     UI — TAB GET KEY
-     ============================================================ ]]
 local hubNames = {}
 for i, h in pairs(HUBS) do hubNames[i] = h.name end
 
@@ -127,7 +114,7 @@ local hubDropdown = MainTab:CreateDropdown({
 
 local keyInput = MainTab:CreateInput({
     Name = "Nhập Key",
-    PlaceholderText = "AURA-KEY-XXXXXXX-XXXXXXXX",
+    PlaceholderText = "Bấm vào đây để nhập",
     RemoveTextAfterFocusLost = false,
     Flag = "InputKey"
 })
@@ -140,7 +127,7 @@ MainTab:CreateButton({
         if setclipboard then setclipboard(WEB_URL) end
         Rayfield:Notify({
             Title = "🌐 MỞ WEB LẤY KEY",
-            Content = "Đã copy link web:\n" .. WEB_URL .. "\n\nMở browser → dán → vượt link4m → copy key → quay lại dán.",
+            Content = "Đã copy link web:\n" .. WEB_URL .. "\n\nMở browser → dán → vượt link4m → copy key → quay lại đây.",
             Duration = 12
         })
         statusLabel:Set("📋 Đã copy link web")
@@ -148,16 +135,40 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
+    Name = "🔍 DEBUG — XEM KEY ĐÃ NHẬP",
+    Callback = function()
+        local raw = cleanKey(keyInput and keyInput.Value or "")
+        Rayfield:Notify({
+            Title = "🔍 KEY SCRIPT ĐỌC ĐƯỢC",
+            Content = "Độ dài: " .. #raw .. " ký tự\nKey: " .. raw,
+            Duration = 20
+        })
+    end
+})
+
+MainTab:CreateButton({
     Name = "✅ CHECK KEY",
     Callback = function()
-        local rawKey = keyInput and keyInput.Value or ""
-        rawKey = rawKey:gsub("%s+", ""):upper()
+        local rawKey = cleanKey(keyInput and keyInput.Value or "")
+
+        if rawKey == "" then
+            Rayfield:Notify({
+                Title = "❌ CHƯA CÓ KEY",
+                Content = "Bấm vào ô Nhập Key, paste key vào, rồi bấm lại.",
+                Duration = 6
+            })
+            return
+        end
 
         local hub = HUBS[selectedHub]
         local ok, err = isValidKey(rawKey, hub.secret)
 
         if not ok then
-            Rayfield:Notify({ Title = "❌ KEY SAI", Content = err, Duration = 6 })
+            Rayfield:Notify({
+                Title = "❌ KEY SAI",
+                Content = err,
+                Duration = 12
+            })
             statusLabel:Set("❌ " .. err)
             return
         end
@@ -165,7 +176,7 @@ MainTab:CreateButton({
         unlockedHubs[selectedHub] = true
         Rayfield:Notify({
             Title = "✅ KEY HỢP LỆ",
-            Content = "Đã mở khoá " .. hub.name .. "!",
+            Content = "Đã mở khoá " .. hub.name .. "!\nQua tab Scripts để load.",
             Duration = 5
         })
         statusLabel:Set("✅ " .. hub.name .. " — đã mở khoá")
@@ -183,7 +194,7 @@ MainTab:CreateButton({
                         fn()
                     end)
                     if not success then
-                        Rayfield:Notify({ Title = "❌ Lỗi", Content = tostring(e), Duration = 6 })
+                        Rayfield:Notify({ Title = "❌ Lỗi load", Content = tostring(e), Duration = 8 })
                     end
                 end
             })
