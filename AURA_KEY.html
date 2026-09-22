@@ -169,32 +169,32 @@
 
 <script>
 /* ============================================================
-   CẤU HÌNH — CHỈ SỬA 4 DÒNG link4m
+   CẤU HÌNH — 4 HUB
    ============================================================ */
 const HUBS = {
   1: {
     name: 'VOIDSHELL',
     secret: '7f3a9c2e8b5d1a4f6e0c9b2d8a7f3e1c5b4d9a2f8e6c1b3d7a5f9e2c4b8d6a1f',
     token:  'VOID_T0KEN_7f3a9c2e',
-    link4m: 'https://link4m.net/ZYjW121'   // <-- ĐIỀN LINK4M THẬT HUB 1
+    link4m: 'https://link4m.net/ZYjW121'
   },
   2: {
     name: 'WHITEX',
     secret: '2b8d4f1a6c9e3b7d5a0f2c8e4b9d1f6a3c7e5b2d8f4a9c1e6b3d7a5f2c8e4b9d',
     token:  'WHITEX_T0KEN_2b8d4f1a',
-    link4m: 'https://link4m.net/qKdqGYX'   // <-- ĐIỀN LINK4M THẬT HUB 2
+    link4m: 'https://link4m.net/qKdqGYX'
   },
   3: {
     name: 'VZSTUDIO',
     secret: '9e5c2a7f4b1d8e6c3a0f9b5d2e7c4a1f8b6d3e9c5a2f7b4d1e8c6a3f9b5d2e7c',
     token:  'VZ_T0KEN_9e5c2a7f',
-    link4m: 'https://link4m.org/gDwqt4'   // <-- ĐIỀN LINK4M THẬT HUB 3
+    link4m: 'https://link4m.org/gDwqt4'
   },
   4: {
     name: 'JUALNASI',
     secret: '4a1f8c5e2b9d6f3a7c0e4b8d1f5a2c9e6b3d7f4a1c8e5b2d9f6a3c7e4b1d8f5a',
     token:  'JUAL_T0KEN_4a1f8c5e',
-    link4m: 'https://link4m.org/2ByDEK'   // <-- ĐIỀN LINK4M THẬT HUB 4
+    link4m: 'https://link4m.org/2ByDEK'
   }
 };
 
@@ -238,15 +238,31 @@ async function getFingerprint(){
 }
 
 /* ============================================================
-   KEY = SHA256(SECRET + fingerprint + thời_điểm_cấp)
+   HASH — djb2, PHẢI GIỐNG HÀM TRONG SCRIPT LUA
+   ============================================================ */
+function djb2(str, seed){
+  let h = seed;
+  for (let i = 0; i < str.length; i++){
+    h = ((h * 33) + str.charCodeAt(i)) % 4294967296;
+  }
+  return h;
+}
+
+function hash8(str){
+  const a = djb2(str + '|a', 5381);
+  const b = djb2(str + '|b', 5381);
+  const hex = a.toString(16).padStart(8, '0') + b.toString(16).padStart(8, '0');
+  return hex.slice(0, 8).toUpperCase();
+}
+
+/* ============================================================
+   KEY FORMAT: AURA-KEY-{timestamp_base36}-{hash8}
    ============================================================ */
 async function buildKey(hubId, fp, issuedAt){
   const hub = HUBS[hubId];
-  const buf = new TextEncoder().encode(hub.secret + '|' + fp + '|' + issuedAt);
-  const h = await crypto.subtle.digest('SHA-256', buf);
-  const hex = [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
-  const short = hex.slice(0, 10).toUpperCase();
-  return `AURA-KEY-${short}`;
+  const ts36 = Math.floor(issuedAt / 1000).toString(36).toUpperCase();
+  const hash = hash8(hub.secret + '|' + ts36);
+  return `AURA-KEY-${ts36}-${hash}`;
 }
 
 /* ============================================================
@@ -303,11 +319,10 @@ async function refreshHub(){
   const st = getHubState(hubId);
   const keyBox = document.getElementById('keyBox');
   const btn = document.getElementById('btnGet');
-  const warn = document.getElementById('warnMsg');
   const cd = document.getElementById('countdown');
   const kd = document.getElementById('keyDisplay');
 
-  warn.textContent = '';
+  document.getElementById('warnMsg').textContent = '';
   document.getElementById('gameLabel').textContent = hub.name;
 
   if (!st || st.hwid !== currentFP || Date.now() >= st.expiresAt){
@@ -392,8 +407,7 @@ function mainAction(){
   window.open(hub.link4m, '_blank');
 
   document.getElementById('warnMsg').innerHTML =
-    '⏳ Sau khi vượt link4m xong, quay lại tab này và bấm F5 để nhận key.<br>' +
-    '<span style="color:#6b5d8a;font-size:10px">(Nếu web không tự load, đợi 5s rồi F5)</span>';
+    '⏳ Sau khi vượt link4m xong, quay lại tab này và bấm F5 để nhận key.';
 }
 
 function copyKey(e){
