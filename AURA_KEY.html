@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCRIPT TỔNG HỢP — AURA KEY</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#1a0b2e 0%,#2d1b4e 50%,#0f0518 100%);
+    color:#fff;position:relative;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:-50%;pointer-events:none;z-index:0;
+    background:radial-gradient(circle at 30% 20%,rgba(139,92,246,.15),transparent 40%),
+               radial-gradient(circle at 70% 80%,rgba(236,72,153,.12),transparent 40%)}
+  .box{position:relative;z-index:2;width:100%;max-width:430px;
+    background:rgba(30,20,50,.85);backdrop-filter:blur(20px);
+    border:1px solid rgba(139,92,246,.3);border-radius:26px;padding:32px 24px;text-align:center;
+    box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 60px rgba(139,92,246,.25)}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    font-size:9px;font-weight:800;letter-spacing:1.5px;margin-bottom:12px}
+  h1{font-size:22px;font-weight:900;letter-spacing:1.5px;margin-bottom:8px;
+    background:linear-gradient(135deg,#c084fc,#8b5cf6,#ec4899);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{font-size:11px;color:#b8a8d8;margin-bottom:8px;line-height:1.6}
+  .sub b{color:#38bdf8}
+  .credit{font-size:10px;color:#8b7ba8;margin-bottom:22px}
+  .credit b{color:#ec4899}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .step{background:rgba(20,12,35,.6);border:1px solid rgba(139,92,246,.2);
+    border-radius:12px;padding:12px 6px}
+  .num{width:24px;height:24px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);border-radius:50%;
+    font-size:11px;font-weight:700}
+  .st{font-size:11px;font-weight:700;margin-bottom:2px}
+  .sd{font-size:9px;color:#9d8ec0}
+  .btn{width:100%;padding:16px;border:0;border-radius:14px;
+    font-weight:800;font-size:14px;color:#fff;letter-spacing:1px;cursor:pointer;
+    background:linear-gradient(135deg,#8b5cf6,#ec4899);
+    box-shadow:0 8px 30px rgba(139,92,246,.5);transition:.3s;position:relative;overflow:hidden}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.15)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .keybox{margin-top:18px;background:rgba(20,12,35,.7);
+    border:1px dashed rgba(139,92,246,.4);border-radius:14px;padding:14px;display:none}
+  .keylbl{font-size:10px;color:#9d8ec0;text-align:left;margin-bottom:8px;letter-spacing:1px;font-weight:700}
+  .keyrow{display:flex;align-items:center;justify-content:space-between;
+    background:rgba(10,5,20,.8);padding:12px 14px;border-radius:10px}
+  .keytxt{font-family:monospace;font-size:13px;font-weight:700;color:#38bdf8;word-break:break-all;letter-spacing:.5px}
+  .cp{background:none;border:0;cursor:pointer;color:#9d8ec0;font-size:18px;padding:4px}
+  .cd{font-size:11px;margin-top:12px;font-weight:700}
+  .cd.ok{color:#34d399}.cd.warn{color:#f59e0b}.cd.dead{color:#f87171}
+  .warn{color:#f87171;font-size:11px;margin-top:12px;line-height:1.5}
+  .tiktok{margin-top:14px;padding:10px;border-radius:12px;
+    background:linear-gradient(135deg,rgba(0,0,0,.4),rgba(255,0,80,.15));
+    border:1px solid rgba(255,0,80,.3);font-size:11px;color:#ff5c8a;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    font-weight:700;text-decoration:none}
+  .tiktok:hover{background:linear-gradient(135deg,rgba(0,0,0,.4),rgba(255,0,80,.25))}
+  .foot{margin-top:16px;font-size:10px;color:#6b5d8a;
+    border-top:1px solid rgba(139,92,246,.1);padding-top:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="badge">PREMIUM EDITION</div>
+  <h1>SCRIPT TỔNG HỢP</h1>
+  <div class="sub">Hệ thống cấp Key tự động <b>30 giờ</b>.<br><b>Mỗi key khóa 1 máy · Nhập 1 lần vào script</b></div>
+  <div class="credit">Credits: TikTok <b>@brmod7</b></div>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="st">GET KEY</div><div class="sd">Mở link4m</div></div>
+    <div class="step"><div class="num">2</div><div class="st">Vượt Link</div><div class="sd">30s</div></div>
+    <div class="step"><div class="num">3</div><div class="st">Nhận Key</div><div class="sd">Dán vào script</div></div>
+  </div>
+
+  <button class="btn" id="btn" onclick="act()">🔑 GET KEY (LẤY KEY 30H)</button>
+
+  <div class="keybox" id="kb">
+    <div class="keylbl">🔑 YOUR KEY</div>
+    <div class="keyrow">
+      <span class="keytxt" id="kd">---</span>
+      <button class="cp" onclick="cpk(event)">📋</button>
+    </div>
+    <div class="cd" id="cd"></div>
+  </div>
+
+  <div class="warn" id="wm"></div>
+
+  <a class="tiktok" href="https://tiktok.com/@brmod7" target="_blank">
+    🎵 Follow TikTok @brmod7
+  </a>
+
+  <div class="foot">🛡️ Khóa HWID 1:1 · Thời hạn 30H từ lúc cấp<br>© AURA HUB · SCRIPT TỔNG HỢP</div>
+</div>
+
+<script>
+/* ============================================================
+   CẤU HÌNH
+   ============================================================ */
+const LINK4M = 'https://link4m.net/ZYjW121';
+const SECRET = '7f3a9c2e';
+const TOKEN  = 'AURA_T0KEN_7f3a9c2e';
+
+const DURATION = 30 * 60 * 60 * 1000;   // 30 GIỜ
+const LS_KEY = 'aura_key';
+const LS_EXP = 'aura_exp';
+const LS_FP  = 'aura_fp';
+
+async function fp(){
+  const r = [
+    navigator.userAgent,navigator.language,
+    screen.width+'x'+screen.height,screen.colorDepth,
+    new Date().getTimezoneOffset(),
+    navigator.hardwareConcurrency||0,navigator.platform,
+    navigator.deviceMemory||0,navigator.maxTouchPoints||0
+  ].join('|');
+  const c = document.createElement('canvas');
+  const x = c.getContext('2d');
+  x.textBaseline='top';x.font='14px Arial';
+  x.fillStyle='#f60';x.fillRect(0,0,100,20);
+  x.fillStyle='#069';x.fillText('AURA-FP',2,2);
+  x.strokeStyle='rgba(102,204,0,.7)';
+  x.arc(50,50,30,0,Math.PI*2);x.stroke();
+  const buf = new TextEncoder().encode(r+'|'+c.toDataURL());
+  const h = await crypto.subtle.digest('SHA-256',buf);
+  return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+let FP = '';
+(async()=>{FP = await fp();checkURL();await refresh();})();
+
+function checkURL(){
+  const p = new URLSearchParams(location.search);
+  if(p.get('passed')!=='1') return;
+  if(p.get('t')!==TOKEN) return;
+  const now = Date.now();
+  const ts36 = Math.floor(now/1000).toString(36).toUpperCase();
+  const key = 'AURA-KEY-'+ts36+'-'+SECRET.toUpperCase();
+  localStorage.setItem(LS_KEY, key);
+  localStorage.setItem(LS_EXP, (now+DURATION).toString());
+  localStorage.setItem(LS_FP, FP);
+  history.replaceState({},'','./');
+}
+
+async function refresh(){
+  const key = localStorage.getItem(LS_KEY);
+  const exp = parseInt(localStorage.getItem(LS_EXP)||'0',10);
+  const fpSaved = localStorage.getItem(LS_FP);
+  const kb = document.getElementById('kb');
+  const btn = document.getElementById('btn');
+  const cd = document.getElementById('cd');
+  const kd = document.getElementById('kd');
+  document.getElementById('wm').textContent = '';
+
+  if(!key || fpSaved!==FP || Date.now()>=exp){
+    kb.style.display = 'none';
+    btn.disabled = false;
+    btn.innerHTML = '🔑 GET KEY (LẤY KEY 30H)';
+    cd.textContent = '';
+    if(window._iv) clearInterval(window._iv);
+    return;
+  }
+  kb.style.display = 'block';
+  btn.disabled = true;
+  btn.innerHTML = '✅ ĐÃ CÓ KEY';
+  kd.textContent = key;
+  upd(exp);
+  if(window._iv) clearInterval(window._iv);
+  window._iv = setInterval(()=>upd(exp),1000);
+}
+
+function upd(exp){
+  const d = Math.floor((exp-Date.now())/1000);
+  const el = document.getElementById('cd');
+  if(d<=0){
+    el.textContent = '❌ Key hết hạn 30h. Bấm GET KEY lại.';
+    el.className = 'cd dead';
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(LS_EXP);
+    localStorage.removeItem(LS_FP);
+    setTimeout(refresh,1500);
+    return;
+  }
+  const h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=d%60;
+  el.textContent = `⏳ Còn lại: ${h}h ${m}m ${s}s`;
+  el.className = 'cd '+(h>=6?'ok':'warn');
+}
+
+function act(){
+  const key = localStorage.getItem(LS_KEY);
+  const exp = parseInt(localStorage.getItem(LS_EXP)||'0',10);
+  if(key && Date.now()<exp){
+    if(!confirm('Đã có key. Lấy key mới? Key cũ sẽ mất.')) return;
+    localStorage.removeItem(LS_KEY);
+    localStorage.removeItem(LS_EXP);
+    localStorage.removeItem(LS_FP);
+  }
+  window.open(LINK4M,'_blank');
+  document.getElementById('wm').innerHTML =
+    '⏳ Vượt link4m xong → quay lại tab này → bấm F5 để nhận key.';
+}
+
+function cpk(e){
+  const k = document.getElementById('kd').textContent;
+  if(!k||k==='---') return;
+  navigator.clipboard.writeText(k);
+  const b = e.target, o = b.textContent;
+  b.textContent = '✅';
+  setTimeout(()=>b.textContent=o,1200);
+}
+
+window.addEventListener('focus', async()=>{checkURL();await refresh();});
+</script>
+</body>
+</html>
