@@ -2,6 +2,7 @@ local WEB_URL = "https://brdoly.github.io/Brdoly/AURA_KEY.html"
 local SAVE = "aura_save.dat"
 local SECRET = "7F3A9C2E"
 local TTL = 30*60*60
+local CROWN_URL = "https://files.catbox.moe/cfdgvm.jpg"
 
 local SCRIPTS = {
     {n="Vantablack Hub", u="https://raw.githubusercontent.com/tranduykhanh08428-web/VantablackHub/refs/heads/main/Stealanegg.lua.txt"},
@@ -13,11 +14,34 @@ local SCRIPTS = {
     {n="Rezzy Steal",    u="https://raw.githubusercontent.com/Roman666Cabj/Nether/refs/heads/main/RezzyStealAnEgg.lua"},
     {n="VoidShell Hub",  u="https://raw.githubusercontent.com/VoidShell-null/VoidShell-Hub/refs/heads/main/Scripts/StealAnEgg.luau"},
     {n="WhiteX Hub",     u="https://raw.githubusercontent.com/WhiteX1208/Scripts/refs/heads/main/StealEggOnly.luau"},
-    {n="JualNasi Hub",   u="https://raw.githubusercontent.com/JualNasiRendang/loader/refs/heads/main/main.lua"}
+    {n="JualNasi Hub",   u="https://raw.githubusercontent.com/JualNasiRendang/loader/refs/heads/main/main.lua"},
+    {n="Chilli Hub",     u="https://raw.githubusercontent.com/tienkhanh1/Chilli-Hub-Script/refs/heads/main/StealAnEgg"},
+    {n="Solix Hub",      u="https://raw.githubusercontent.com/napun87/script/refs/heads/main/solix.hub"},
+    {n="Hosi Hub",       u="https://raw.githubusercontent.com/napun87/stealanegg/refs/heads/main/hosi.lua"},
+    {n="Lennon Farm",    u="https://raw.githubusercontent.com/lennonxscripts/lennonfarm/refs/heads/main/farmv1.lua"},
+    {n="VinCore Hub",    u="https://raw.githubusercontent.com/kadit9999/stealanegg/refs/heads/main/vincore.lua"},
+    {n="ObfuscatorHub",  u="https://obfuscatorhub.vercel.app/api/iUVlubxQ"},
+    {n="RealKid Hub",    u="https://raw.githubusercontent.com/realkidhub/realkid/refs/heads/main/main.lua"},
+    {n="Kex Hub",        u="https://raw.githubusercontent.com/premiumbuddy/kex/refs/heads/main/kexxxx"},
+    {n="Stopped Script", u="https://raw.githubusercontent.com/kadit9999/stealanegg/refs/heads/main/stopped.lua"},
+    {n="Speed Hub X",    u="https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua"}
 }
 
 local S = game:GetService("HttpService")
 local P = game:GetService("Players").LocalPlayer
+
+local function getCrown()
+    local ok, id = pcall(function()
+        local f = "aura_c.png"
+        if writefile then
+            writefile(f, game:HttpGet(CROWN_URL))
+            return getcustomasset(f)
+        end
+    end)
+    if ok and id then return id end
+    return "rbxassetid://10709799087"
+end
+local CROWN = getCrown()
 
 local function ck(k)
     if type(k)~="string" then return "" end
@@ -183,7 +207,7 @@ local ht = Instance.new("TextLabel",pg2)
 ht.Size = UDim2.new(1,-32,0,20)
 ht.Position = UDim2.new(0,16,0,12)
 ht.BackgroundTransparency = 1
-ht.Text = "📜 DANH SÁCH SCRIPT"
+ht.Text = "📜 DANH SÁCH SCRIPT ("..#SCRIPTS..")"
 ht.TextColor3 = Color3.fromRGB(192,132,252)
 ht.Font = Enum.Font.GothamBold
 ht.TextSize = 13
@@ -273,15 +297,26 @@ local function nt(t,c,col)
     task.delay(4,function() p:Destroy() end)
 end
 
-local rb = Instance.new("TextButton")
-rb.Size = UDim2.new(0,50,0,50)
+local rb = Instance.new("ImageButton")
+rb.Size = UDim2.new(0,60,0,60)
 rb.Position = UDim2.new(0,20,0,120)
-rb.BackgroundColor3 = Color3.fromRGB(139,92,246)
-rb.Text = "🔑"
-rb.TextSize = 22
+rb.BackgroundColor3 = Color3.fromRGB(16,12,28)
+rb.Image = CROWN
+rb.ScaleType = Enum.ScaleType.Fit
 rb.Visible = false
 rb.Parent = g
 Instance.new("UICorner",rb).CornerRadius = UDim.new(1,0)
+
+local rbs = Instance.new("UIStroke",rb)
+rbs.Color = Color3.fromRGB(192,132,252)
+rbs.Thickness = 2
+rbs.Transparency = 0.2
+
+local rbp = Instance.new("UIPadding",rb)
+rbp.PaddingTop = UDim.new(0,8)
+rbp.PaddingBottom = UDim.new(0,8)
+rbp.PaddingLeft = UDim.new(0,8)
+rbp.PaddingRight = UDim.new(0,8)
 
 xb.MouseButton1Click:Connect(function()
     m.Visible = false
